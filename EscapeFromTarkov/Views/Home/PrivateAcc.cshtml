@@ -1,0 +1,54 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Личный кабинет";
+}
+@model Пользователь
+<section>
+    <form asp-action="PrivateAcc" method="post">
+        <div class="grid-main">
+            <nav class="menu">
+                <ul>
+                    <a asp-action="MainWindow">Об игре</a>
+                    <a asp-action="PrivateAcc">Личный кабинет</a>
+                    <a asp-action="Bosses">Боссы</a>
+                    <a asp-action="Cards">Карты</a>
+                    <a asp-action="NPS">НПС</a>
+                    <a asp-action="ChatBot">Бот-помощник</a>
+                    <a asp-action="Chat">Чат</a>
+                </ul>
+            </nav>
+            <div class="main-container-privateacc">
+                <div class="main-grid-item">Личный кабинет</div>
+                <div class="text-item" style="grid-row:2;">Логин</div>
+                <div class="text-item" style="grid-row:3;">Пароль</div>
+                <div class="text-item" style="grid-row:4;">Выживания</div>
+                <div class="text-item" style="grid-row:5;">Смерти</div>
+                <div class="text-item" style="grid-row:6;">Потерян Безвести</div>
+                <div class="text-item" style="grid-row:7;">Количество Рейдов</div>
+                <div class="text-item" style="grid-row:8;">Убийства</div>
+                <div class="text-item" style="grid-row:9;">Убийства Чвк</div>
+                <label class="text-item" for="imageUpload" style="grid-row:10;">Доказательство</label>
+
+                <input type="text" value="@Model.Логин" style="grid-row:2;" name="login"/>
+                <input type="password" value="@Model.Пароль" style="grid-row:3;" name="password"/>
+                <input type="number" value="@Model.Выживания" style="grid-row:4;" name="survival"/>
+                <input type="number" value="@Model.Смерти" style="grid-row:5;" name="death"/>
+                <input type="number" value="@Model.ПотерянБезвести" style="grid-row:6;" name="lost"/>
+                <input type="number" value="@Model.КоличествоРейдов" style="grid-row:7;" name="count"/>
+                <input type="number" value="@Model.Убийства" style="grid-row:8;" name="murders"/>
+                <input type="number" value="@Model.УбийстваЧвк" style="grid-row:9;" name="murdersChVK"/>
+                <input type="file" id="imageUpload" name="image" accept="image/*" style="grid-row:10;">
+
+                <button type="submit" action="">Сохранить</button>
+            </div>
+        </div>
+    </form>
+    <script>
+        document.getElementById('imageUpload').addEventListener('change', function (event) {
+            var file = event.target.files[0];
+            if (!file) {
+                alert('Ошибка: Вы отменили выбор файла');
+            }
+        });
+    </script>
+</section>

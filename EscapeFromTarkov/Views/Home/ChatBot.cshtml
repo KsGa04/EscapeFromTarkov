@@ -1,0 +1,38 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Бот-помощник";
+}
+<link rel="stylesheet" href="~/css/bot.css" asp-append-version="true" />
+<section>
+    <form asp-action="ChatBot" method="get">
+        <div class="grid-main">
+            <nav class="menu">
+                <ul>
+                    <a asp-action="MainWindow">Об игре</a>
+                    <a asp-action="PrivateAcc">Личный кабинет</a>
+                    <a asp-action="Bosses">Боссы</a>
+                    <a asp-action="Cards">Карты</a>
+                    <a asp-action="NPS">НПС</a>
+                    <a asp-action="ChatBot">Бот-помощник</a>
+                    <a asp-action="Chat">Чат</a>
+                </ul>
+            </nav>
+            <div class="main-container-bot">
+                <div class="chat-container">
+                    <div class="chat-messages">
+                    </div>
+                    <div class="button-group">
+                        <button id="start-btn">Начать</button>
+                        <button id="more-btn">Еще</button>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" placeholder="Введите сообщение" name="text">
+                        <button id="send"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="../wwwroot/js/site.js"></script>

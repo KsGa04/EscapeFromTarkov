@@ -1,0 +1,115 @@
+﻿.chat-container {
+    display: flex;
+    height: 600px;
+    width: 800px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 2%;
+    position: absolute;
+}
+
+/* Стили для списка пользователей */
+.user-list {
+    width: 250px;
+    background-color: #1F1F1F;
+    padding: 20px;
+    overflow-y: auto;
+    color: white;
+}
+
+    .user-list ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .user-list li {
+        padding: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        border-radius: 5px;
+    }
+
+        .user-list li.active {
+            background-color: #9a8866;
+        }
+
+/* Стили для чата */
+.chat {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #2c2c2c;
+}
+
+.chat-messages {
+    height: 500px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.chat-input {
+    display: flex;
+    align-items: center;
+}
+
+    .chat-input input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #9a8866;
+        color: #fff;
+    }
+
+    .chat-input button {
+        margin-left: 10px;
+        padding: 10px 20px;
+        background-color: #918559;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+.message {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    margin: 3px 0;
+    border-radius: 5px;
+}
+
+.message-content {
+    background-color: #d3d3d3;
+    padding: 10px;
+    border-radius: 5px;
+    background: #9a8866;
+    text-shadow: 0 0 3px #fff000,0 0 10px rgba(255,0,0,.75);
+    color: #fff;
+}
+
+.their {
+    background: #9a8866;
+}
+
+.their-message {
+    flex-direction: row-reverse;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background-image: url("../img/bot.png");
+    background-size: cover; /* Размер фона */
+    background-position: center;
+}
+
+.their-avatar {
+    order: -1; /* Используйте свойство order для перемещения изображения вправо */
+    margin-left: 10px;
+    background-image: url("../img/user.png");
+    background-size: cover; /* Размер фона */
+    background-position: center;
+}
