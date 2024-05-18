@@ -1,0 +1,102 @@
+﻿.moderator-container {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    width:100%;
+}
+
+.user-list {
+    width: 30%;
+    background-color: #1F1F1F;
+    padding: 20px;
+    color: white;
+    height: 100%;
+    overflow-y: auto;
+    position: absolute;
+}
+
+    .user-list ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .user-list li {
+        padding: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        border-radius: 5px;
+    }
+
+        .user-list li.active {
+            background-color: #9a8866;
+        }
+
+.user-info-panel {
+    width: 60%;
+    background-color: #1F1F1F;
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+    position: absolute;
+    left:40%;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+    .info-item label {
+        width: 150px;
+        font-weight: bold;
+    }
+
+    .info-item input {
+        flex: 1;
+    }
+
+    .info-item input {
+        background: rgba(109,101,85,1);
+        opacity: 1;
+        border: 1px solid rgba(205,201,218,1);
+        border-radius: 3px;
+        color: white;
+    }
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+    .actions button {
+        margin-left: 10px;
+        padding: 8px 16px;
+        font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        .actions button.approve-btn {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+label {
+    color: white;
+}
+h3 {
+    color: white;
+}
+#image_user {
+    width:300px;
+    height:300px;
+}

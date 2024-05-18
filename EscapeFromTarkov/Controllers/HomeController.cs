@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace EscapeFromTarkov.Controllers
 {
@@ -34,30 +35,31 @@ namespace EscapeFromTarkov.Controllers
             return View(пользователь);
         }
         [HttpPost]
-        public IActionResult PrivateAccAsync(string login, string password, int survival, int death, int lost, int count, int murders, int murdersChVK, IFormFile image)
+        public IActionResult PrivateAcc(string login, string password, int survival, int death, int lost, int count, int murders, int murdersChVK, IFormFile photo)
         {
+            MemoryStream ms = new MemoryStream();
+            photo.CopyTo(ms);
             Пользователь пользователь = db.Пользовательs.Where(x => x.ПользовательId == CurrentUser.CurrentClientId).FirstOrDefault();
-            пользователь.Логин = login;
-            пользователь.Пароль = password;
-            пользователь.Выживания = survival;
-            пользователь.Смерти = death;
-            пользователь.ПотерянБезвести = lost;
-            пользователь.КоличествоРейдов = count;
-            пользователь.Убийства = murders;
-            пользователь.УбийстваЧвк = murdersChVK;
-            if (image != null && image.Length > 0)
+            try
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    image.CopyToAsync(memoryStream);
-                    пользователь.Доказательство = memoryStream.ToArray();
-                    db.SaveChanges();
+                
+                пользователь.Логин = login;
+                пользователь.Пароль = password;
+                пользователь.Выживания = survival;
+                пользователь.Смерти = death;
+                пользователь.ПотерянБезвести = lost;
+                пользователь.КоличествоРейдов = count;
+                пользователь.Убийства = murders;
+                пользователь.УбийстваЧвк = murdersChVK;
+                пользователь.Доказательство = ms.ToArray();
+                пользователь.Одобрено = false;
+                db.SaveChanges();
                     return View(пользователь);
-                }
             }
-            else
+            catch (Exception ex)
             {
-                ModelState.AddModelError("", "Изображение не выбрано");
+                // Обработайте исключение и отображайте соответствующее сообщение пользователю
+                ModelState.AddModelError("", $"Произошла ошибка при загрузке файла: {ex.Message}");
                 return View(пользователь);
             }
         }
@@ -197,6 +199,15 @@ namespace EscapeFromTarkov.Controllers
                 HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
                 return RedirectToAction("AdminPanelBoss", "Home");
             }
+            else if (CurrentUser.CurrentClientId > 0 && пользователь.РолиId == 3)
+            {
+                var claims = new List<Claim> { new Claim(ClaimTypes.Name, "test"),
+                new Claim(ClaimTypes.Email, "testc@mail.ru")};
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Cookies");
+
+                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                return RedirectToAction("ModeratorWindow", "Home");
+            }
             else
             {
                 var result = new SuccessResponse
@@ -293,9 +304,130 @@ namespace EscapeFromTarkov.Controllers
         }
         public IActionResult Chat()
         {
-            return View();
+            var users = db.Пользовательs.Where(u => u.Онлайн == true && u.ПользовательId != CurrentUser.CurrentClientId && u.РолиId == 1).ToList();
+            return View(users);
         }
-        public IActionResult ChatBot()
+        public class MessageResponse
+        {
+            public int TotalCount { get; set; }
+            public List<Message> Messages { get; set; }
+
+        }
+        public class Message
+        {
+            public string Сообщение { get; set; }
+            public string Позиция { get; set; }
+        }
+        [HttpPost("GetMessages")]
+        public ActionResult GetMessages([FromBody] string userName)
+        {
+            if (string.IsNullOrEmpty(userName))
+            {
+                // Обработка ошибки, если userName равен null или пустая строка
+                return Json(new { error = "Invalid userName" });
+            }
+
+            var currentUser = db.Пользовательs.Where(x => x.ПользовательId == CurrentUser.CurrentClientId).FirstOrDefault();
+
+            if (currentUser == null)
+            {
+                // Обработка ошибки, если текущий пользователь не найден
+                return Json(new { error = "Current user not found" });
+            }
+
+            // Получаем сообщения для данного пользователя из базы данных
+            var messages = db.Общениеs
+                .Where(m => (m.ОтправительNavigation.Логин == userName && m.ПолучательNavigation.Логин == currentUser.Логин) || (m.ОтправительNavigation.Логин == currentUser.Логин && m.ПолучательNavigation.Логин == userName))
+                .Select(m => new Message
+                {
+                    Сообщение = m.Сообщение,
+                    Позиция = (m.ОтправительNavigation.Логин == currentUser.Логин) ? "left" : "right"
+                })
+                .ToList();
+            var response = new MessageResponse
+            {
+                TotalCount = messages.Count,
+                Messages = messages
+            };
+            // Возвращаем сообщения в формате JSON
+            return Json(response);
+        }
+        [HttpPost("GetInformation")]
+        public ActionResult GetInformation([FromBody] string userName)
+        {
+            if (string.IsNullOrEmpty(userName))
+            {
+                // Обработка ошибки, если userName равен null или пустая строка
+                return Json(new { error = "Invalid userName" });
+            }
+
+            var User = db.Пользовательs.Where(x => x.Логин ==userName).FirstOrDefault();
+
+            return Json(User);
+        }
+        public class MessageData
+        {
+            public string userName { get; set; }
+            public string formattedDate { get; set; }
+            public string message { get; set; }
+        }
+        [HttpPost("AddMessages")]
+        public ActionResult AddMessages([FromBody] MessageData messageData)
+        {
+            if (string.IsNullOrEmpty(messageData.userName))
+            {
+                // Обработка ошибки, если userName равен null или пустая строка
+                return Json(new { error = "Invalid userName" });
+            }
+
+            var recipient = db.Пользовательs.Where(x => x.Логин == messageData.userName).FirstOrDefault();
+
+            if (recipient == null)
+            {
+                // Обработка ошибки, если текущий пользователь не найден
+                return Json(new { error = "Recipient not found" });
+            }
+
+            Общение общение = new Общение();
+            общение.Сообщение = messageData.message;
+            общение.Отправитель = CurrentUser.CurrentClientId;
+            общение.Получатель = recipient.ПользовательId;
+            общение.ВремяОтправки = Convert.ToDateTime( messageData.formattedDate);
+            db.Общениеs.Add(общение);
+            db.SaveChanges();
+            return Ok();
+        }
+        public IActionResult ModeratorWindow()
+        {
+            var users = db.Пользовательs.Where(u => u.Одобрено == false && u.РолиId == 1).ToList();
+            return View(users);
+        }
+        public class Acc
+        {
+            public string логин { get; set; }
+            public int? выживания { get; set; }
+            public int? смерти { get; set; }
+            public int? потерянБезвести { get; set; }
+            public int? количествоРейдов { get; set; }
+            public int? убийства { get; set; }
+            public int? убийстваЧвк { get; set; }
+            public bool? одобрено { get; set; }
+        }
+        [HttpPost("SaveChangesModer")]
+        public ActionResult SaveChangesModer([FromBody] Acc data)
+        {
+            Пользователь пользователь = db.Пользовательs.Where(x => x.Логин == data.логин).FirstOrDefault();
+            пользователь.Выживания = data.выживания;
+            пользователь.Смерти = data.смерти;
+            пользователь.ПотерянБезвести = data.потерянБезвести;
+            пользователь.КоличествоРейдов = data.количествоРейдов;
+            пользователь.Убийства = data.убийства;
+            пользователь.УбийстваЧвк = data.убийстваЧвк;
+            db.SaveChanges();
+            return Ok();
+        }
+
+            public IActionResult ChatBot()
         {
             return View();
         }

@@ -21,6 +21,7 @@ namespace EscapeFromTarkov
         public int? Убийства { get; set; }
         public int? УбийстваЧвк { get; set; }
         public byte[]? Доказательство { get; set; }
+        public bool? Одобрено { get; set; }
         public bool? Онлайн { get; set; }
         public int? КартаId { get; set; }
         public int? РолиId { get; set; }

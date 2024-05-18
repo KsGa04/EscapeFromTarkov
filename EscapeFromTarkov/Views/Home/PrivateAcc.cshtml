@@ -2,9 +2,9 @@
     Layout = "_Layout";
     ViewData["Title"] = "Личный кабинет";
 }
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Пользователь
 <section>
-    <form asp-action="PrivateAcc" method="post">
         <div class="grid-main">
             <nav class="menu">
                 <ul>
@@ -17,6 +17,7 @@
                     <a asp-action="Chat">Чат</a>
                 </ul>
             </nav>
+            <form asp-action="PrivateAcc" method="post" enctype="multipart/form-data">
             <div class="main-container-privateacc">
                 <div class="main-grid-item">Личный кабинет</div>
                 <div class="text-item" style="grid-row:2;">Логин</div>
@@ -37,18 +38,29 @@
                 <input type="number" value="@Model.КоличествоРейдов" style="grid-row:7;" name="count"/>
                 <input type="number" value="@Model.Убийства" style="grid-row:8;" name="murders"/>
                 <input type="number" value="@Model.УбийстваЧвк" style="grid-row:9;" name="murdersChVK"/>
-                <input type="file" id="imageUpload" name="image" accept="image/*" style="grid-row:10;">
-
+                <input style="grid-row:10;" required class="d-inline" type="file" id="photo-uploader" accept=".png, .jpg, .jpeg" name="photo" />
+                <img class="gameImg" id="uploadingGameImage" width="350" height="200" src="data:image/jpeg;base64,@Convert.ToBase64String(@Model.Доказательство)" onclick="toggleFullScreenImage(this)" />
                 <button type="submit" action="">Сохранить</button>
             </div>
+            </form>
         </div>
-    </form>
-    <script>
-        document.getElementById('imageUpload').addEventListener('change', function (event) {
-            var file = event.target.files[0];
-            if (!file) {
-                alert('Ошибка: Вы отменили выбор файла');
-            }
-        });
-    </script>
 </section>
+<script src="~/js/acc.js">
+  
+</script>
+<script>
+    function toggleFullScreenImage(img) {
+        const container = document.createElement('div');
+        container.classList.add('full-screen-image');
+
+        const fullScreenImg = document.createElement('img');
+        fullScreenImg.src = img.src;
+
+        container.appendChild(fullScreenImg);
+        document.body.appendChild(container);
+
+        container.addEventListener('click', () => {
+            document.body.removeChild(container);
+        });
+    }
+</script>

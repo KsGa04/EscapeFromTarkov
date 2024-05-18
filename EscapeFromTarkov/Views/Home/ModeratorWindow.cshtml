@@ -1,0 +1,84 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Модератор";
+}
+@using static EscapeFromTarkov.Controllers.HomeController;
+@model IEnumerable<Пользователь>
+<link rel="stylesheet" href="~/css/moderator.css" asp-append-version="true" />
+<section>
+    <form asp-action="ModeratorWindow" method="post">
+    <div class="moderator-container">
+        <div class="user-list">
+            <ul>
+                @foreach (var user in Model)
+                {
+                    <li>@user.Логин</li>
+                }
+            </ul>
+        </div>
+
+
+        <div class="user-info-panel">
+        <div class="user-info">
+            <h3>Личные данные пользователя</h3>
+            <div class="info-item">
+                <label for="login">Логин:</label>
+                <input type="text" id="login" value="" disabled>
+            </div>
+            <div class="info-item">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" value="" disabled>
+            </div>
+            <div class="info-item">
+                <label for="survival">Выживания:</label>
+                <input type="number" id="survival" value="">
+            </div>
+            <div class="info-item">
+                <label for="death">Смерти:</label>
+                <input type="number" id="death" value="">
+            </div>
+            <div class="info-item">
+                <label for="lost">Потерян Безвести:</label>
+                <input type="number" id="lost" value="">
+            </div>
+            <div class="info-item">
+                <label for="count">Количество Рейдов:</label>
+                <input type="number" id="count" value="">
+            </div>
+            <div class="info-item">
+                <label for="murders">Убийства:</label>
+                <input type="number" id="murders" value="">
+            </div>
+            <div class="info-item">
+                <label for="murdersChVK">Убийства Чвк:</label>
+                <input type="number" id="murdersChVK" value="">
+            </div>
+            <div class="info-item">
+                <label for="image">Доказательство:</label>
+                        <img id="image_user" src="" alt="Доказательство" disabled onclick="toggleFullScreenImage(this)">
+            </div>
+        </div>
+        <div class="actions">
+                    <button class="approve-btn" id="approve-btn">Одобрить</button>
+        </div>
+        </div>
+    </div>
+    </form>
+</section>
+<script src="~/js/moderator.js"></script>
+<script>
+    function toggleFullScreenImage(img) {
+        const container = document.createElement('div');
+        container.classList.add('full-screen-image');
+
+        const fullScreenImg = document.createElement('img');
+        fullScreenImg.src = img.src;
+
+        container.appendChild(fullScreenImg);
+        document.body.appendChild(container);
+
+        container.addEventListener('click', () => {
+            document.body.removeChild(container);
+        });
+    }
+</script>

@@ -146,12 +146,12 @@ namespace EscapeFromTarkov.Models
                 entity.HasOne(d => d.Карта)
                     .WithMany(p => p.Пользовательs)
                     .HasForeignKey(d => d.КартаId)
-                    .HasConstraintName("FK__Пользоват__Карта__4CA06362");
+                    .HasConstraintName("FK__Пользоват__Карта__48CFD27E");
 
                 entity.HasOne(d => d.Роли)
                     .WithMany(p => p.Пользовательs)
                     .HasForeignKey(d => d.РолиId)
-                    .HasConstraintName("FK__Пользоват__РолиI__4D94879B");
+                    .HasConstraintName("FK__Пользоват__РолиI__49C3F6B7");
             });
 
             modelBuilder.Entity<Роли>(entity =>

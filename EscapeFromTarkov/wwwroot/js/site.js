@@ -75,7 +75,7 @@ function getGiftsFromServer() {
                     });
                 }
                 else {
-                    var userMessage = "Похожие подарки закончились";
+                    var userMessage = "Похожие товраы закончились";
                     var newTheirMessage = createMessageElement("message", userMessage, false);
                     chatMessages.appendChild(newTheirMessage);
                     document.getElementById("more-btn").style.display = "none";

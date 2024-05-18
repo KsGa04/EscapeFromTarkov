@@ -2,9 +2,11 @@
     Layout = "_Layout";
     ViewData["Title"] = "Чат";
 }
+@using static EscapeFromTarkov.Controllers.HomeController;
+@model IEnumerable<Пользователь>
 <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
 <section>
-    <form asp-action="ChatBot" method="get">
+    <form asp-action="Chat" method="get">
         <div class="grid-main">
             <nav class="menu">
                 <ul>
@@ -19,20 +21,32 @@
             </nav>
             <div class="main-container-bot">
                 <div class="chat-container">
-                    <div class="user-list">
-                        <ul>
-                            <li class="active">John Doe</li>
-                            <li>Jane Smith</li>
-                            <li>Bob Johnson</li>
-                            <li>Alice Williams</li>
-                        </ul>
+                    <div class="user-container">
+                        <div class="user-list">
+                            <ul>
+                                @foreach (var user in Model)
+                                {
+                                    <li>@user.Логин</li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="user-info">
+                            <p>Выживания: <span id="user-survivals"></span></p>
+                            <p>Смерти: <span id="user-deaths"></span></p>
+                            <p>Потерян без вести: <span id="user-missing"></span></p>
+                            <p>Количество рейдов: <span id="user-raids"></span></p>
+                            <p>Убийства: <span id="user-kills"></span></p>
+                            <p>Убийства для ЧВК: <span id="user-kills-cvk"></span></p>
+                        </div>
                     </div>
+                    
                     <div class="chat">
                         <div class="chat-messages">
+                            
                         </div>
                         <div class="chat-input">
-                            <input type="text" placeholder="Type your message...">
-                            <button><i class="fas fa-paper-plane"></i> Send</button>
+                            <input type="text" placeholder="Type your message..." id="chat-input">
+                            <button id="send-button"><i class="fas fa-paper-plane"></i> Send</button>
                         </div>
                     </div>
                 </div>
@@ -40,3 +54,4 @@
         </div>
     </form>
 </section>
+<script src="~/js/chat.js"></script>

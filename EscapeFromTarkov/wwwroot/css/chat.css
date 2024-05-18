@@ -6,23 +6,31 @@
     border-radius: 5px;
     overflow: hidden;
     margin-top: 2%;
-    position: absolute;
+    position: relative; /* Добавлено */
 }
 
-/* Стили для списка пользователей */
-.user-list {
+/* Стили для списка пользователей и информации о пользователе */
+.user-container {
     width: 250px;
     background-color: #1F1F1F;
     padding: 20px;
-    overflow-y: auto;
     color: white;
+    display: flex; /* Добавлено */
+    flex-direction: column; /* Добавлено */
+}
+
+.user-list {
+    list-style-type: none;
+    padding: 0;
+    max-height: 330px;
+    overflow-y: auto;
+    flex-grow: 1; /* Добавлено */
 }
 
     .user-list ul {
         list-style-type: none;
         padding: 0;
     }
-
     .user-list li {
         padding: 10px;
         cursor: pointer;
@@ -33,6 +41,15 @@
         .user-list li.active {
             background-color: #9a8866;
         }
+
+.user-info {
+    height: 300px;
+    background-color: #2c2c2c;
+    margin-top: 10px; /* Расстояние между списком и информацией о пользователе */
+    font-size: 14px;
+    border-color: black;
+    border-width: 5px;
+}
 
 /* Стили для чата */
 .chat {
@@ -45,6 +62,7 @@
     height: 500px;
     overflow-y: auto;
     margin-bottom: 20px;
+    flex-direction: column;
 }
 
 .chat-input {
