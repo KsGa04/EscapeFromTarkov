@@ -61,12 +61,13 @@ function getMessagesFromServer(userName) {
         }
     });
 }
+
 function createMessageElement(className, content, isTheir = false) {
     var messageElement = document.createElement("div");
     messageElement.className = "message " + className;
     messageElement.innerHTML = `<div class='avatar ${isTheir ? "their-avatar" : ""}'></div><div class='message-content ${isTheir ? "their" : ""}'>${content}</div>`;
     return messageElement;
-}
+};
 
 const chatMessages = document.querySelector(".chat-messages");
 const chatInput = document.getElementById("chat-input");
@@ -154,3 +155,30 @@ function displayUserInfo(user) {
     document.getElementById('user-kills').textContent = user.убийства || 0;
     document.getElementById('user-kills-cvk').textContent = user.убийстваЧвк || 0;
 }
+// Получаем элементы, с которыми будем работать
+//const userFilterSelect = document.getElementById('user-filter-select');
+//const user_list = document.getElementById('user-list');
+
+//// Добавляем обработчик события на изменение значения select
+//userFilterSelect.addEventListener('change', (event) => {
+//    event.preventDefault();
+//    const selectedCardName = userFilterSelect.value;
+//    user_list.innerHTML = '';
+
+//    $.ajax({
+//        type: "POST",
+//        url: "/ChangeCard",
+//        contentType: "application/json",
+//        data: JSON.stringify(selectedCardName),
+//        success: function (data) {
+//            const user_list = $('#user-list');
+
+//            // Добавляем новых пользователей в список
+//            data.forEach(user => {
+//                const li = $('<li>').text(user.логин);
+//                user_list.append(li);
+//            });
+//        },
+
+//    });
+//});

@@ -302,10 +302,41 @@ namespace EscapeFromTarkov.Controllers
             CurrentUser.CurrentClientId = 0;
             return RedirectToAction("Authorization", "Home");
         }
+        public class PrivateAccModel
+        {
+            public List<Пользователь> Users = new List<Пользователь>();
+            public List<Карта> Cards = new List<Карта>();
+        }
         public IActionResult Chat()
         {
             var users = db.Пользовательs.Where(u => u.Онлайн == true && u.ПользовательId != CurrentUser.CurrentClientId && u.РолиId == 1).ToList();
-            return View(users);
+            var responce = new PrivateAccModel
+            {
+                Users = users,
+                Cards = db.Картаs.ToList()
+            };
+
+            return View(responce);
+        }
+        [HttpPost("ChangeCard")]
+        public ActionResult ChangeCard([FromBody] string selectedCardName)
+        {
+            Карта карта = db.Картаs.Where(x => x.Наименование == selectedCardName).FirstOrDefault();
+            if (карта == null)
+            {
+                var users = db.Пользовательs.Where(u => u.Онлайн == true && u.ПользовательId != CurrentUser.CurrentClientId && u.РолиId == 1).ToList();
+
+                return Json(users);
+            }
+            else
+            {
+                Пользователь пользователь = db.Пользовательs.Where(x => x.ПользовательId == CurrentUser.CurrentClientId).FirstOrDefault();
+                пользователь.КартаId = карта.КартаId;
+                db.SaveChanges();
+                var users = db.Пользовательs.Where(u => u.Онлайн == true && u.ПользовательId != CurrentUser.CurrentClientId && u.РолиId == 1 && u.КартаId == карта.КартаId).ToList();
+                return Json(users);
+            }
+            
         }
         public class MessageResponse
         {

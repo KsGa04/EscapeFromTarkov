@@ -3,7 +3,7 @@
     ViewData["Title"] = "Чат";
 }
 @using static EscapeFromTarkov.Controllers.HomeController;
-@model IEnumerable<Пользователь>
+@model PrivateAccModel
 <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
 <section>
     <form asp-action="Chat" method="get">
@@ -21,12 +21,50 @@
             </nav>
             <div class="main-container-bot">
                 <div class="chat-container">
+                    <div class="user-filters" id="user-filters">
+                        <div class="user-filter justify-content-center">
+                            <select id="user-filter-select">
+                                <option value="">Все карты</option>
+                                @foreach (var card in Model.Cards)
+                                {
+                                    <option value="@card.Наименование">@card.Наименование</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="user-filter">
+                            <label for="min-survivals">Выживания:</label>
+                            <input type="number" id="min-survivals" value="0" min="0">
+                        </div>
+                        <div class="user-filter">
+                            <label for="min-deaths">Смерти:</label>
+                            <input type="number" id="min-deaths" value="0" min="0">
+                        </div>
+                        <div class="user-filter">
+                            <label for="min-missing">Пропавшие без вести:</label>
+                            <input type="number" id="min-missing" value="0" min="0">
+                        </div>
+                        <div class="user-filter">
+                            <label for="min-raids">Рейды:</label>
+                            <input type="number" id="min-raids" value="0" min="0">
+                        </div>
+                        <div class="user-filter">
+                            <label for="min-kills">Убийства:</label>
+                            <input type="number" id="min-kills" value="0" min="0">
+                        </div>
+                        <div class="user-filter">
+                            <label for="min-kills-cvk">Убийства для ЧВК:</label>
+                            <input type="number" id="min-kills-cvk" value="0" min="0">
+                        </div>
+                        <div class="user-filter justify-content-center">
+                            <button id="find-button">Найти</button>
+                        </div>
+                    </div>
                     <div class="user-container">
                         <div class="user-list">
-                            <ul>
-                                @foreach (var user in Model)
+                            <ul id="user-list">
+                                @foreach (var user in Model.Users)
                                 {
-                                    <li>@user.Логин</li>
+                                    <li @*data-login="@user.Логин" data-survivals="@user.Выживания" data-deaths="@user.Смерти" data-missing="@user.ПотерянБезвести" data-raids="@user.КоличествоРейдов" data-kills="@user.Убийства" data-kills-cvk="@user.УбийстваЧвк"*@>@user.Логин</li>
                                 }
                             </ul>
                         </div>
@@ -37,12 +75,11 @@
                             <p>Количество рейдов: <span id="user-raids"></span></p>
                             <p>Убийства: <span id="user-kills"></span></p>
                             <p>Убийства для ЧВК: <span id="user-kills-cvk"></span></p>
+                            <button id="toggle-btn">Открыть/Закрыть</button>
                         </div>
                     </div>
-                    
                     <div class="chat">
                         <div class="chat-messages">
-                            
                         </div>
                         <div class="chat-input">
                             <input type="text" placeholder="Type your message..." id="chat-input">
@@ -55,3 +92,11 @@
     </form>
 </section>
 <script src="~/js/chat.js"></script>
+<script>
+    const chatContainer = document.getElementById('user-filters');
+
+    document.getElementById('toggle-btn').addEventListener('click', function (event) {
+        event.preventDefault();
+        chatContainer.classList.toggle('hidden');
+    });
+</script>
