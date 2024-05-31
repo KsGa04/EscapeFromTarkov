@@ -22,7 +22,10 @@
                 <div id="name"></div>
                 <img id="image" alt="Boss Image" class="boss-image" width="350" height="300" />
                 <div id="description"></div>
-
+                <div>Выходы:
+                </div>
+                <ul class="outputs">
+                </ul>
             </div>
         </div>
     </form>
@@ -40,9 +43,13 @@
                     $('#name').text(data.name);
                     $('#image').attr('src', data.image);
                     $('#description').text(data.description)
+                    $('.outputs').empty(); // очистка списка выходов
+                    $.each(data.outputs, function (index, output) {
+                        $('.outputs').append('<li>' + output + '</li>'); // добавление выходов
+                    });
                 },
                 error: function () {
-                    alert('Произошла ошибка при получении информации о НПС');
+                    alert('Произошла ошибка при получении информации о картах');
                 }
             });
         });

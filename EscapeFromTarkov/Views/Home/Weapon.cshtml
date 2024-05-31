@@ -1,0 +1,62 @@
+﻿@using static EscapeFromTarkov.Controllers.HomeController;
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Оружие";
+}
+@model PrivateAccViewModel
+<section>
+    <form asp-action="Weapon" method="get">
+        <div class="grid-main">
+            <nav class="menu">
+                <ul>
+                    @foreach (var nps in Model.Weapon)
+                    {
+                        if (nps.Наименование != null)
+                        {
+                            <a>@nps.Наименование</a>
+                        }
+                    }
+                </ul>
+            </nav>
+            <div class="main-container-weapon">
+                        @*@foreach (var подарок in Model.Products)
+                        {
+                            if (подарок != null)
+                            {
+                                <div class="grid-item-allproducts">
+                                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(подарок.Изображение)">
+                                    <p class="grid-cell-name">@подарок.Наименование</p>
+                                    <p class="grid-cell-count">@подарок.Цена.ToString("N0") ₽</p>
+                                </div>
+                            }
+                        }*@
+            </div>
+        </div>
+    </form>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.menu a').click(function () {
+            var bossName = $(this).text().trim();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetWeaponInfo", "Home")',
+                data: { bossName: bossName },
+                success: function (data) {
+                    $('.main-container-weapon').empty();
+                    $.each(data, function (index, weapon) {
+                        var weaponBlock = $('<div>').addClass('grid-item-allproducts');
+                        var weaponImage = $('<img>').attr('src', weapon.image);
+                        var weaponName = $('<p>').addClass('grid-cell-name').text(weapon.name);
+                        weaponBlock.append(weaponImage, weaponName);
+                        $('.main-container-weapon').append(weaponBlock);
+                    });
+                },
+                error: function () {
+                    alert('Произошла ошибка при получении информации об оружии');
+                }
+            });
+        });
+    });
+</script>

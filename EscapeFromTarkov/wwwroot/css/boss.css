@@ -38,3 +38,43 @@ th {
 #description {
     text-indent: 30px;
 }
+.outputs {
+    color: white;
+}
+
+.main-container-weapon {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: min-content; /* автоматическая высота строк */
+    row-gap: 10%;
+    height: 85%;
+    width: 90%;
+    margin: 2%;
+    position: relative;
+    border: 1px solid rgba(205,201,218,1);
+    background-color: rgba(50,50,50,70%);
+    border-radius: 3px;
+    font-size: 20px;
+}
+
+
+.grid-item-allproducts {
+    text-align: center; /* выравнивание изображений по центру */
+    height: 150px;
+    width: 200px;
+    position: relative;
+    margin: 5px;
+}
+
+    .grid-item-allproducts img {
+        border-radius: 6px; /* задаем радиус закругления */
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* добавляем тень вокруг изображений вместо рамок */
+        height: 100px;
+        width: 200px;
+    }
+.grid-cell-name {
+    font-size: 20px;
+    height: 30px;
+    color: white;
+}

@@ -70,6 +70,7 @@ namespace EscapeFromTarkov.Controllers
             public IEnumerable<Карта>? Card { get; set; }
             public IEnumerable<Оружие>? Weapon { get; set; }
             public IEnumerable<Товары>? Product { get; set; }
+            public IEnumerable<Выходы>? Outputs { get; set; }
             public string name;
             public string image;
             public string description;
@@ -136,7 +137,8 @@ namespace EscapeFromTarkov.Controllers
                 {
                     name = boss.Наименование,
                     image = "data:image/jpeg;base64," + imageBase64, // здесь указывается тип изображения и сама строка Base64
-                    description = boss.Описание
+                    description = boss.Описание,
+                    Outputs = db.Выходыs.Where(x => x.КартаId == boss.КартаId).Select(x => x.Наименование).ToList()
                 };
 
                 return Json(bossInfo);
@@ -163,6 +165,36 @@ namespace EscapeFromTarkov.Controllers
                 Card = персонажи
             };
             return View(ViewModel);
+        }
+        public IActionResult Weapon()
+        {
+            var персонажи = db.Оружиеs.ToList();
+            var ViewModel = new PrivateAccViewModel()
+            {
+                Weapon = персонажи
+            };
+            return View(ViewModel);
+        }
+
+        public IActionResult GetWeaponInfo(string bossName)
+        {
+            Оружие оружие = db.Оружиеs.Where(x => x.Наименование == bossName).FirstOrDefault();
+            List<Сборка> weapons = db.Сборкаs.Where(x => x.ОружиеId == оружие.ОружиеId).ToList();
+
+            if (weapons.Count > 0)
+            {
+                var weaponInfoList = weapons.Select(w => new
+                {
+                    name = w.Наименование,
+                    image = "data:image/jpeg;base64," + Convert.ToBase64String(w.Изображение)
+                }).ToList();
+
+                return Json(weaponInfoList);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
         [AllowAnonymous]
         public IActionResult Authorization()
@@ -318,25 +350,73 @@ namespace EscapeFromTarkov.Controllers
 
             return View(responce);
         }
-        [HttpPost("ChangeCard")]
-        public ActionResult ChangeCard([FromBody] string selectedCardName)
+        [HttpPost]
+        public IActionResult ChatFilt(int? minsurvivals, int? mindeaths, int? minmissing, int? minraids, int? minkills, int? minkillscvk)
         {
-            Карта карта = db.Картаs.Where(x => x.Наименование == selectedCardName).FirstOrDefault();
+            var users = db.Пользовательs
+                .Where(u => u.Онлайн == true && u.ПользовательId != CurrentUser.CurrentClientId && u.РолиId == 1)
+                .ToList();
+
+            if (minsurvivals.HasValue)
+            {
+                users = users.Where(u => u.Выживания >= minsurvivals.Value).ToList();
+            }
+
+            if (mindeaths.HasValue)
+            {
+                users = users.Where(u => u.Смерти >= mindeaths.Value).ToList();
+            }
+
+            if (minmissing.HasValue)
+            {
+                users = users.Where(u => u.ПотерянБезвести >= minmissing.Value).ToList();
+            }
+
+            if (minraids.HasValue)
+            {
+                users = users.Where(u => u.КоличествоРейдов >= minraids.Value).ToList();
+            }
+
+            if (minkills.HasValue)
+            {
+                users = users.Where(u => u.Убийства >= minkills.Value).ToList();
+            }
+
+            if (minkillscvk.HasValue)
+            {
+                users = users.Where(u => u.УбийстваЧвк >= minkillscvk.Value).ToList();
+            }
+
+            var responce = new PrivateAccModel
+            {
+                Users = users,
+                Cards = db.Картаs.ToList()
+            };
+
+            return View(responce);
+        }
+        [HttpPost("ChangeCard")]
+        public ActionResult ChangeCard([FromBody] ChangeCardModel model)
+        {
+            Карта карта = db.Картаs.Where(x => x.Наименование == model.SelectedCardName).FirstOrDefault();
             if (карта == null)
             {
-                var users = db.Пользовательs.Where(u => u.Онлайн == true && u.ПользовательId != CurrentUser.CurrentClientId && u.РолиId == 1).ToList();
-
-                return Json(users);
+                var response = db.Пользовательs.Where(u => u.Онлайн == true && u.ПользовательId != CurrentUser.CurrentClientId && u.РолиId == 1).ToList();
+                return Json(response);
             }
             else
             {
                 Пользователь пользователь = db.Пользовательs.Where(x => x.ПользовательId == CurrentUser.CurrentClientId).FirstOrDefault();
                 пользователь.КартаId = карта.КартаId;
                 db.SaveChanges();
-                var users = db.Пользовательs.Where(u => u.Онлайн == true && u.ПользовательId != CurrentUser.CurrentClientId && u.РолиId == 1 && u.КартаId == карта.КартаId).ToList();
-                return Json(users);
+                var response = db.Пользовательs.Where(u => u.Онлайн == true && u.ПользовательId != CurrentUser.CurrentClientId && u.РолиId == 1 && u.КартаId == карта.КартаId).ToList();
+                return Json(response);
             }
-            
+        }
+
+        public class ChangeCardModel
+        {
+            public string SelectedCardName { get; set; }
         }
         public class MessageResponse
         {

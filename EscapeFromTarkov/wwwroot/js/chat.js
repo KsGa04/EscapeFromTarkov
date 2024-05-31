@@ -1,4 +1,11 @@
-﻿const userList = document.querySelectorAll('.user-list li');
+﻿const chatContainer = document.getElementById('user-filters');
+
+document.getElementById('toggle-btn').addEventListener('click', function (event) {
+    event.preventDefault();
+    chatContainer.classList.toggle('hidden');
+});
+
+const userList = document.querySelectorAll('.user-list li');
 
 userList.forEach(li => {
     li.addEventListener('click', async () => {
@@ -156,29 +163,37 @@ function displayUserInfo(user) {
     document.getElementById('user-kills-cvk').textContent = user.убийстваЧвк || 0;
 }
 // Получаем элементы, с которыми будем работать
-//const userFilterSelect = document.getElementById('user-filter-select');
-//const user_list = document.getElementById('user-list');
+const userFilterSelect = document.getElementById('user-filter-select');
+const user_list = document.getElementById('user-list');
 
-//// Добавляем обработчик события на изменение значения select
-//userFilterSelect.addEventListener('change', (event) => {
-//    event.preventDefault();
-//    const selectedCardName = userFilterSelect.value;
-//    user_list.innerHTML = '';
+// Добавляем обработчик события на изменение значения select
+userFilterSelect.addEventListener('change', (event) => {
+    event.preventDefault();
+    const selectedCardName = userFilterSelect.value;
+    const data = {
+        selectedCardName: selectedCardName
+    };
+    user_list.innerHTML = '';
+    fetch('/ChangeCard', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.json())
+        .then(data => {
+            //const user_list = $('#user-list');
+            //user_list.empty(); // Очищаем список пользователей перед добавлением новых
 
-//    $.ajax({
-//        type: "POST",
-//        url: "/ChangeCard",
-//        contentType: "application/json",
-//        data: JSON.stringify(selectedCardName),
-//        success: function (data) {
-//            const user_list = $('#user-list');
+            //// Добавляем новых пользователей в список
+            //data.forEach(user => {
+            //    const li = $('<li>').text(user.логин);
+            //    user_list.append(li);
+            //});
+        })
+        .catch(error => {
+            console.error('Error fetching user information:', error);
+        });
 
-//            // Добавляем новых пользователей в список
-//            data.forEach(user => {
-//                const li = $('<li>').text(user.логин);
-//                user_list.append(li);
-//            });
-//        },
-
-//    });
-//});
+});

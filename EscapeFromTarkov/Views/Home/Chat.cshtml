@@ -6,7 +6,7 @@
 @model PrivateAccModel
 <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
 <section>
-    <form asp-action="Chat" method="get">
+    <form asp-action="Chat" method="post">
         <div class="grid-main">
             <nav class="menu">
                 <ul>
@@ -15,6 +15,7 @@
                     <a asp-action="Bosses">Боссы</a>
                     <a asp-action="Cards">Карты</a>
                     <a asp-action="NPS">НПС</a>
+                    <a asp-action="Weapon">Оружие</a>
                     <a asp-action="ChatBot">Бот-помощник</a>
                     <a asp-action="Chat">Чат</a>
                 </ul>
@@ -32,31 +33,31 @@
                             </select>
                         </div>
                         <div class="user-filter">
-                            <label for="min-survivals">Выживания:</label>
-                            <input type="number" id="min-survivals" value="0" min="0">
+                            <label for="minsurvivals">Выживания:</label>
+                            <input type="number" id="minsurvivals" value="0" min="0">
                         </div>
                         <div class="user-filter">
-                            <label for="min-deaths">Смерти:</label>
-                            <input type="number" id="min-deaths" value="0" min="0">
+                            <label for="mindeaths">Смерти:</label>
+                            <input type="number" id="mindeaths" value="0" min="0">
                         </div>
                         <div class="user-filter">
-                            <label for="min-missing">Пропавшие без вести:</label>
-                            <input type="number" id="min-missing" value="0" min="0">
+                            <label for="minmissing">Пропавшие без вести:</label>
+                            <input type="number" id="minmissing" value="0" min="0">
                         </div>
                         <div class="user-filter">
-                            <label for="min-raids">Рейды:</label>
-                            <input type="number" id="min-raids" value="0" min="0">
+                            <label for="minraids">Рейды:</label>
+                            <input type="number" id="minraids" value="0" min="0">
                         </div>
                         <div class="user-filter">
-                            <label for="min-kills">Убийства:</label>
-                            <input type="number" id="min-kills" value="0" min="0">
+                            <label for="minkills">Убийства:</label>
+                            <input type="number" id="minkills" value="0" min="0">
                         </div>
                         <div class="user-filter">
-                            <label for="min-kills-cvk">Убийства для ЧВК:</label>
-                            <input type="number" id="min-kills-cvk" value="0" min="0">
+                            <label for="minkillscvk">Убийства для ЧВК:</label>
+                            <input type="number" id="minkillscvk" value="0" min="0">
                         </div>
                         <div class="user-filter justify-content-center">
-                            <button id="find-button">Найти</button>
+                            <button id="find-button" type="submit" action="ChatFilt">Найти</button>
                         </div>
                     </div>
                     <div class="user-container">
@@ -64,7 +65,7 @@
                             <ul id="user-list">
                                 @foreach (var user in Model.Users)
                                 {
-                                    <li @*data-login="@user.Логин" data-survivals="@user.Выживания" data-deaths="@user.Смерти" data-missing="@user.ПотерянБезвести" data-raids="@user.КоличествоРейдов" data-kills="@user.Убийства" data-kills-cvk="@user.УбийстваЧвк"*@>@user.Логин</li>
+                                    <li data-login="@user.Логин" data-survivals="@user.Выживания" data-deaths="@user.Смерти" data-missing="@user.ПотерянБезвести" data-raids="@user.КоличествоРейдов" data-kills="@user.Убийства" data-kills-cvk="@user.УбийстваЧвк">@user.Логин</li>
                                 }
                             </ul>
                         </div>
@@ -91,12 +92,43 @@
         </div>
     </form>
 </section>
-<script src="~/js/chat.js"></script>
-<script>
-    const chatContainer = document.getElementById('user-filters');
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@*<script src="~/js/chat.js"></script>*@
+@*<script>
+    document.getElementById('find-button').addEventListener('click', function () {
+        // Получение значений из фильтров
+        var minsurvivals = document.getElementById('minsurvivals').textContent;
+        var mindeaths = document.getElementById('mindeaths').value;
+        var minmissing = document.getElementById('minmissing').value;
+        var minraids = document.getElementById('minraids').value;
+        var minkills = document.getElementById('minkills').value;
+        var minkillscvk = document.getElementById('minkillscvk').value;
 
-    document.getElementById('toggle-btn').addEventListener('click', function (event) {
-        event.preventDefault();
-        chatContainer.classList.toggle('hidden');
+        // Отправка AJAX-запроса
+        $.ajax({
+            url: '@Url.Action("Chat", "Home")',
+            type: 'GET',
+            data: {
+                minsurvivals: minsurvivals,
+                mindeaths: mindeaths,
+                minmissing: minmissing,
+                minraids: minraids,
+                minkills: minkills,
+                minkillscvk: minkillscvk
+            },
+            success: function (data) {
+                const user_list = $('#user-list');
+                user_list.empty(); // Очищаем список пользователей перед добавлением новых
+
+                // Добавляем новых пользователей в список
+                data.Users.forEach(user => {
+                    const li = $('<li>').text(user.логин);
+                    user_list.append(li);
+                });
+            },
+            error: function (xhr, status, error) {
+                console.log('Произошла ошибка: ' + error);
+            }
+        });
     });
-</script>
+</script>*@
